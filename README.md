@@ -27,12 +27,8 @@ git clone https://github.com/OscarZurita/IoTProject.git
 cd iot-backend
 ```
 
-2. Build and run with Docker Compose
+2. Start the application
 ```bash
-# Build the application
-./mvnw clean package -DskipTests
-
-# Start the containers
 docker compose up -d
 ```
 
