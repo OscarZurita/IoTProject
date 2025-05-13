@@ -12,16 +12,37 @@ A Spring Boot backend application for an IoT plant monitoring system. This syste
 
 ## Prerequisites
 
-- Java 21
-- Maven
-- MariaDB
-- Docker (optional, for containerized database)
+- Java 21 (for local development)
+- Maven (for local development)
+- MariaDB (to avoid using docker)
+- Docker and Docker Compose (for containerized setup)
 
 ## Setup
 
+### Using Docker (Recommended)
+
 1. Clone the repository
 ```bash
-git clone [your-repo-url]
+git clone https://github.com/OscarZurita/IoTProject.git
+cd iot-backend
+```
+
+2. Build and run with Docker Compose
+```bash
+# Build the application
+./mvnw clean package -DskipTests
+
+# Start the containers
+docker compose up -d
+```
+
+The application will be available at `http://localhost:8080`
+
+### Local Development Setup
+
+1. Clone the repository
+```bash
+git clone https://github.com/OscarZurita/IoTProject.git
 cd iot-backend
 ```
 
@@ -52,6 +73,7 @@ The project uses:
 - Spring Data JPA
 - MariaDB
 - Maven
+- Docker (for containerization)
 
 ## License
 
