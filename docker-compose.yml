@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+
+  backend:
+    build: .
+    restart: "no"
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/iot_plant
+      SPRING_DATASOURCE_USERNAME: iot_user
+      SPRING_DATASOURCE_PASSWORD: userdbpassword
+    depends_on:
+      - mariadb
+
+  mariadb:
+    image: mariadb:latest
+    restart: "no"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootdbpassword
+      MYSQL_DATABASE: iot_plant
+      MYSQL_USER: iot_user
+      MYSQL_PASSWORD: userdbpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+volumes:
+  mariadb_data: 
