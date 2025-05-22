@@ -14,6 +14,10 @@ public class SensorData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull
+    @Column(name = "device_id", nullable = false)
+    private Long deviceId;
     
     @NotNull
     @Column(name = "timestamp", nullable = false)
