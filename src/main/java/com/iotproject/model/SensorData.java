@@ -1,9 +1,12 @@
 package com.iotproject.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -12,10 +15,24 @@ public class SensorData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @NotNull
+    @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
+
+    @NotNull
+    @Column(name = "temperature", nullable = false)
     private Double temperature;
+
+    @NotNull
+    @Column(name = "moisture", nullable = false)
     private Double moisture;
+
+    @NotNull
+    @Column(name = "light", nullable = false)
     private Double light;
+
+    @NotNull    
+    @Column(name = "watering_status", nullable = false)
     private Boolean wateringStatus;
 
     // Default constructor
