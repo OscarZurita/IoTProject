@@ -35,4 +35,12 @@ public class SensorDataController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/latest")
+    public ResponseEntity<SensorData> getLatestSensorData() {
+        return sensorDataRepository.findAll().stream()
+                .reduce((first, second) -> second)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 } 
