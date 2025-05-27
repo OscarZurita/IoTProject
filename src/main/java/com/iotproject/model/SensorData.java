@@ -51,6 +51,14 @@ public class SensorData {
         this.id = id;
     }
 
+    public Long getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(Long deviceId) {
+        this.deviceId = deviceId;
+    }
+
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
