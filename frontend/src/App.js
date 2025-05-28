@@ -1,44 +1,50 @@
-import React, { useEffect, useState } from 'react';
-import './App.css';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Container,
+  CssBaseline,
+  ThemeProvider,
+  createTheme,
+} from '@mui/material';
+import DeviceList from './components/DeviceList';
+import DeviceDetails from './components/DeviceDetails';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+    },
+    secondary: {
+      main: '#dc004e',
+    },
+  },
+});
 
 function App() {
-  const [log, setLog] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    fetch('/api/sensor-data/latest')
-      .then((res) => {
-        if (!res.ok) throw new Error('No log found');
-        return res.json();
-      })
-      .then((data) => {
-        setLog(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError('No log data available.');
-        setLoading(false);
-      });
-  }, []);
+  const [selectedDevice, setSelectedDevice] = useState(null);
 
   return (
-    <div className="container">
-      <h1>Latest Microcontroller Log</h1>
-      <div className="log">
-        {loading && 'Loading...'}
-        {error && error}
-        {log && !error && (
-          <>
-            <div><span className="label">Timestamp:</span> {log.timestamp || 'N/A'}</div>
-            <div><span className="label">Temperature:</span> {log.temperature} °C</div>
-            <div><span className="label">Moisture:</span> {log.moisture} %</div>
-            <div><span className="label">Light:</span> {log.light} lux</div>
-            <div><span className="label">Watering Status:</span> {log.wateringStatus ? 'ON' : 'OFF'}</div>
-          </>
-        )}
-      </div>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <AppBar position="static">
+          <Toolbar>
+            <Typography variant="h6" component={Link} to="/" sx={{ textDecoration: 'none', color: 'white' }}>
+              Plant Monitoring
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Container maxWidth="xl">
+          <Routes>
+            <Route path="/" element={<DeviceList />} />
+            <Route path="/device/:deviceId" element={<DeviceDetails />} />
+          </Routes>
+        </Container>
+      </Router>
+    </ThemeProvider>
   );
 }
 
