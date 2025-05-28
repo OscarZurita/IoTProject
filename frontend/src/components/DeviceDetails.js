@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import {
   Box,
   Paper,
@@ -17,17 +18,20 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 
-const DeviceDetails = ({ deviceId }) => {
+const DeviceDetails = () => {
+  const { deviceId } = useParams();
   const [deviceData, setDeviceData] = useState(null);
   const [history, setHistory] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchDeviceData = async () => {
     try {
       setLoading(true);
+      setError(null);
       const [latestResponse, historyResponse] = await Promise.all([
         axios.get(`http://localhost:8080/api/sensor-data/device/${deviceId}/latest`),
         axios.get(`http://localhost:8080/api/sensor-data/device/${deviceId}?page=${page}&size=${rowsPerPage}`)
@@ -37,6 +41,7 @@ const DeviceDetails = ({ deviceId }) => {
       setTotalItems(historyResponse.data.totalElements);
     } catch (error) {
       console.error('Error fetching device data:', error);
+      setError('Failed to load device data. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -61,6 +66,16 @@ const DeviceDetails = ({ deviceId }) => {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
         <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ p: 3 }}>
+        <Typography variant="h6" color="error">
+          {error}
+        </Typography>
       </Box>
     );
   }
@@ -132,7 +147,7 @@ const DeviceDetails = ({ deviceId }) => {
               <TableCell>Temperature (°C)</TableCell>
               <TableCell>Moisture (%)</TableCell>
               <TableCell>Light (lux)</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell>Watering Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -145,7 +160,7 @@ const DeviceDetails = ({ deviceId }) => {
                 <TableCell>{record.moisture.toFixed(1)}</TableCell>
                 <TableCell>{record.light.toFixed(1)}</TableCell>
                 <TableCell>
-                  {record.wateringStatus ? 'Watering' : 'Normal'}
+                  {record.wateringStatus ? 'ON' : 'OFF'}
                 </TableCell>
               </TableRow>
             ))}
