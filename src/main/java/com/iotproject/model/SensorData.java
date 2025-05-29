@@ -29,7 +29,7 @@ public class SensorData {
 
     @NotNull
     @Column(name = "moisture", nullable = false)
-    private Double moisture;
+    private Integer moisture;
 
     @NotNull
     @Column(name = "light", nullable = false)
@@ -75,11 +75,11 @@ public class SensorData {
         this.temperature = temperature;
     }
 
-    public Double getMoisture() {
+    public Integer getMoisture() {
         return moisture;
     }
 
-    public void setMoisture(Double moisture) {
+    public void setMoisture(Integer moisture) {
         this.moisture = moisture;
     }
 
