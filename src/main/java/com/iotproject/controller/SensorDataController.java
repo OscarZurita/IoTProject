@@ -1,7 +1,7 @@
 package com.iotproject.controller;
 
 import com.iotproject.model.SensorData;
-import com.iotproject.repository.SensorDataRepository;
+import com.iotproject.service.SensorDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,16 +18,16 @@ import java.util.HashMap;
 @RequestMapping("/api/sensor-data")
 public class SensorDataController {
 
-    private final SensorDataRepository sensorDataRepository;
+    private final SensorDataService sensorDataService;
 
     @Autowired
-    public SensorDataController(SensorDataRepository sensorDataRepository) {
-        this.sensorDataRepository = sensorDataRepository;
+    public SensorDataController(SensorDataService sensorDataService) {
+        this.sensorDataService = sensorDataService;
     }
 
     @PostMapping
     public ResponseEntity<SensorData> createSensorData(@RequestBody SensorData sensorData) {
-        return ResponseEntity.ok(sensorDataRepository.save(sensorData));
+        return ResponseEntity.ok(sensorDataService.saveSensorData(sensorData));
     }
 
     @GetMapping
@@ -41,12 +41,12 @@ public class SensorDataController {
             Sort.Direction.ASC : Sort.Direction.DESC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
         
-        return ResponseEntity.ok(sensorDataRepository.findAll(pageable));
+        return ResponseEntity.ok(sensorDataService.getAllSensorData(pageable));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<SensorData> getSensorDataById(@PathVariable Long id) {
-        return sensorDataRepository.findById(id)
+        return sensorDataService.getSensorDataById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -57,21 +57,21 @@ public class SensorDataController {
             @RequestParam(defaultValue = "10") int size) {
         
         Pageable pageable = PageRequest.of(page, size);
-        Page<SensorData> latestData = sensorDataRepository.findLatestDataForAllDevices(pageable);
+        Page<SensorData> latestData = sensorDataService.getLatestDataForAllDevices(pageable);
         
         Map<String, Object> response = new HashMap<>();
         response.put("data", latestData.getContent());
         response.put("currentPage", latestData.getNumber());
         response.put("totalItems", latestData.getTotalElements());
         response.put("totalPages", latestData.getTotalPages());
-        response.put("totalDevices", sensorDataRepository.countDistinctDevices());
+        response.put("totalDevices", sensorDataService.countDistinctDevices());
         
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/device/{deviceId}/latest")
     public ResponseEntity<SensorData> getLatestDataByDeviceId(@PathVariable Long deviceId) {
-        SensorData latestData = sensorDataRepository.findLatestDataByDeviceId(deviceId);
+        SensorData latestData = sensorDataService.getLatestDataByDeviceId(deviceId);
         return latestData != null ? 
             ResponseEntity.ok(latestData) : 
             ResponseEntity.notFound().build();
@@ -89,6 +89,6 @@ public class SensorDataController {
             Sort.Direction.ASC : Sort.Direction.DESC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
         
-        return ResponseEntity.ok(sensorDataRepository.findByDeviceId(deviceId, pageable));
+        return ResponseEntity.ok(sensorDataService.getAllDataByDeviceId(deviceId, pageable));
     }
 } 

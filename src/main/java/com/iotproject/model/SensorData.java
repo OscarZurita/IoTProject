@@ -24,20 +24,12 @@ public class SensorData {
     private LocalDateTime timestamp;
 
     @NotNull
-    @Column(name = "temperature", nullable = false)
-    private Double temperature;
-
-    @NotNull
     @Column(name = "moisture", nullable = false)
     private Integer moisture;
 
     @NotNull
     @Column(name = "light", nullable = false)
     private Double light;
-
-    @NotNull    
-    @Column(name = "watering_status", nullable = false)
-    private Boolean wateringStatus;
 
     // Default constructor
     public SensorData() {}
@@ -67,14 +59,6 @@ public class SensorData {
         this.timestamp = timestamp;
     }
 
-    public Double getTemperature() {
-        return temperature;
-    }
-
-    public void setTemperature(Double temperature) {
-        this.temperature = temperature;
-    }
-
     public Integer getMoisture() {
         return moisture;
     }
@@ -89,13 +73,5 @@ public class SensorData {
 
     public void setLight(Double light) {
         this.light = light;
-    }
-
-    public Boolean getWateringStatus() {
-        return wateringStatus;
-    }
-
-    public void setWateringStatus(Boolean wateringStatus) {
-        this.wateringStatus = wateringStatus;
     }
 } 
