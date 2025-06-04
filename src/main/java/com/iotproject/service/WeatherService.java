@@ -14,9 +14,10 @@ public class WeatherService {
 
     public Map<String, Object> getWeather(String city) {
         String url = UriComponentsBuilder
-                .fromUriString("http://api.weatherapi.com/v1/current.json")
+                .fromUriString("http://api.weatherapi.com/v1/forecast.json")
                 .queryParam("key", API_KEY)
                 .queryParam("q", city)
+                .queryParam("days", 1)
                 .build().toString();
 
         RestTemplate restTemplate = new RestTemplate();
