@@ -26,8 +26,8 @@ public class SensorDataController {
     }
 
     @PostMapping
-    public ResponseEntity<SensorData> createSensorData(@RequestBody SensorData sensorData) {
-        return ResponseEntity.ok(sensorDataService.saveSensorData(sensorData));
+    public ResponseEntity<?> createSensorData(@RequestBody SensorData sensorData) {
+        return ResponseEntity.ok(sensorDataService.saveSensorData(sensorData).getBody());
     }
 
     @GetMapping
