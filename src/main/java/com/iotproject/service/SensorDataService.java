@@ -59,7 +59,7 @@ public class SensorDataService {
         // If moisture is dry, check weather conditions
         else {
             // Get weather data
-            Map<String, Object> weatherData = weatherService.getWeather("Emden");
+            Map<String, Object> weatherData = weatherService.getForecast("Emden");
             
             // Check forecast for rain
             Map<String, Object> forecast = (Map<String, Object>) weatherData.get("forecast");

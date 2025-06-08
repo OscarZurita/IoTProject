@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import DeviceList from './components/DeviceList';
 import DeviceDetails from './components/DeviceDetails';
+import Weather from './components/Weather';
 
 const theme = createTheme({
   palette: {
@@ -38,6 +39,7 @@ function App() {
           </Toolbar>
         </AppBar>
         <Container maxWidth="xl">
+          <Weather />
           <Routes>
             <Route path="/" element={<DeviceList />} />
             <Route path="/device/:deviceId" element={<DeviceDetails />} />

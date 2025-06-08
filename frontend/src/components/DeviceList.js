@@ -95,10 +95,8 @@ const DeviceList = () => {
           <TableHead>
             <TableRow>
               <TableCell>Device ID</TableCell>
-              <TableCell>Temperature (°C)</TableCell>
               <TableCell>Moisture (%)</TableCell>
               <TableCell>Light (lux)</TableCell>
-              <TableCell>Watering Status</TableCell>
               <TableCell>Last Updated</TableCell>
             </TableRow>
           </TableHead>
@@ -113,16 +111,8 @@ const DeviceList = () => {
                 }}
               >
                 <TableCell>{device.deviceId}</TableCell>
-                <TableCell>{device.temperature.toFixed(1)}</TableCell>
                 <TableCell>{device.moisture.toFixed(1)}</TableCell>
                 <TableCell>{device.light.toFixed(1)}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={device.wateringStatus ? 'ON' : 'OFF'}
-                    color={device.wateringStatus ? 'primary' : 'default'}
-                    size="small"
-                  />
-                </TableCell>
                 <TableCell>
                   {new Date(device.timestamp).toLocaleString()}
                 </TableCell>

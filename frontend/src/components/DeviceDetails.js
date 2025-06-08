@@ -92,30 +92,18 @@ const DeviceDetails = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h5" gutterBottom>
+      <Typography variant="h5" gutterBottom align="center" sx={{ mb: 4 }}>
         Device {deviceId} Details
       </Typography>
 
-      <Grid container spacing={3} sx={{ mb: 4 }}>
+      <Grid container spacing={3} sx={{ mb: 4, justifyContent: 'center' }}>
         <Grid item xs={12} md={4}>
           <Card>
             <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Temperature
-              </Typography>
-              <Typography variant="h4">
-                {deviceData.temperature.toFixed(1)}°C
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
+              <Typography color="textSecondary" gutterBottom align="center">
                 Moisture
               </Typography>
-              <Typography variant="h4">
+              <Typography variant="h4" align="center">
                 {deviceData.moisture.toFixed(1)}%
               </Typography>
             </CardContent>
@@ -124,10 +112,10 @@ const DeviceDetails = () => {
         <Grid item xs={12} md={4}>
           <Card>
             <CardContent>
-              <Typography color="textSecondary" gutterBottom>
+              <Typography color="textSecondary" gutterBottom align="center">
                 Light
               </Typography>
-              <Typography variant="h4">
+              <Typography variant="h4" align="center">
                 {deviceData.light.toFixed(1)} lux
               </Typography>
             </CardContent>
@@ -144,10 +132,8 @@ const DeviceDetails = () => {
           <TableHead>
             <TableRow>
               <TableCell>Timestamp</TableCell>
-              <TableCell>Temperature (°C)</TableCell>
               <TableCell>Moisture (%)</TableCell>
               <TableCell>Light (lux)</TableCell>
-              <TableCell>Watering Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -156,12 +142,8 @@ const DeviceDetails = () => {
                 <TableCell>
                   {new Date(record.timestamp).toLocaleString()}
                 </TableCell>
-                <TableCell>{record.temperature.toFixed(1)}</TableCell>
                 <TableCell>{record.moisture.toFixed(1)}</TableCell>
                 <TableCell>{record.light.toFixed(1)}</TableCell>
-                <TableCell>
-                  {record.wateringStatus ? 'ON' : 'OFF'}
-                </TableCell>
               </TableRow>
             ))}
           </TableBody>
