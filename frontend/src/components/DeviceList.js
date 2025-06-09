@@ -14,6 +14,7 @@ import {
   IconButton,
   Typography,
   Chip,
+  CircularProgress,
 } from '@mui/material';
 import { Search as SearchIcon, Refresh as RefreshIcon } from '@mui/icons-material';
 import axios from 'axios';
@@ -25,16 +26,18 @@ const DeviceList = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalDevices, setTotalDevices] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchDevices = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:8080/api/sensor-data/latest?page=${page}&size=${rowsPerPage}`);
-      setDevices(response.data.data);
-      setTotalDevices(response.data.totalDevices);
+      const response = await axios.get(`http://localhost:8080/api/sensor-data/latest`);
+      setDevices(response.data);
+      setTotalDevices(response.data.length);
     } catch (error) {
       console.error('Error fetching devices:', error);
+      setDevices([]);
+      setTotalDevices(0);
     } finally {
       setLoading(false);
     }
@@ -42,7 +45,7 @@ const DeviceList = () => {
 
   useEffect(() => {
     fetchDevices();
-  }, [page, rowsPerPage]);
+  }, []);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -63,10 +66,17 @@ const DeviceList = () => {
 
   const filteredDevices = devices.filter(device =>
     device.deviceId.toString().includes(searchTerm) ||
-    device.temperature.toString().includes(searchTerm) ||
     device.moisture.toString().includes(searchTerm) ||
     device.light.toString().includes(searchTerm)
   );
+
+  if (loading) {
+    return (
+      <Box sx={{ width: '100%', p: 3, display: 'flex', justifyContent: 'center' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ width: '100%', p: 3 }}>

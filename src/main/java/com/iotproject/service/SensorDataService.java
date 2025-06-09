@@ -98,19 +98,19 @@ public class SensorDataService {
         return sensorDataRepository.findById(id);
     }
 
-    public Page<SensorData> getLatestDataForAllDevices(Pageable pageable) {
-        return sensorDataRepository.findLatestDataForAllDevices(pageable);
+    public List<SensorData> getLatestDataForAllDevices() {
+        return sensorDataRepository.findLatestDataForAllDevices();
     }
 
     public Long countDistinctDevices() {
         return sensorDataRepository.countDistinctDevices();
     }
 
-    public SensorData getLatestDataByDeviceId(Long deviceId) {
+    public SensorData getLatestDataByDeviceId(String deviceId) {
         return sensorDataRepository.findLatestDataByDeviceId(deviceId);
     }
 
-    public Page<SensorData> getAllDataByDeviceId(Long deviceId, Pageable pageable) {
+    public Page<SensorData> getAllDataByDeviceId(String deviceId, Pageable pageable) {
         return sensorDataRepository.findByDeviceId(deviceId, pageable);
     }
 }

@@ -14,14 +14,14 @@ public interface SensorDataRepository extends JpaRepository<SensorData, Long> {
 
     // Find latest sensor data for each device with pagination
     @Query("SELECT s FROM SensorData s WHERE s.timestamp = (SELECT MAX(s2.timestamp) FROM SensorData s2 WHERE s2.deviceId = s.deviceId)")
-    Page<SensorData> findLatestDataForAllDevices(Pageable pageable);
+    List<SensorData> findLatestDataForAllDevices();
 
     // Find latest sensor data for a specific device
     @Query("SELECT s FROM SensorData s WHERE s.deviceId = ?1 ORDER BY s.timestamp DESC LIMIT 1")
-    SensorData findLatestDataByDeviceId(Long deviceId);
+    SensorData findLatestDataByDeviceId(String deviceId);
 
     // Get all data for a specific device with pagination
-    Page<SensorData> findByDeviceId(Long deviceId, Pageable pageable);
+    Page<SensorData> findByDeviceId(String deviceId, Pageable pageable);
 
     // Get count of unique devices
     @Query("SELECT COUNT(DISTINCT s.deviceId) FROM SensorData s")

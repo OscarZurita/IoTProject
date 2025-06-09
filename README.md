@@ -71,6 +71,11 @@ The project uses:
 - Maven
 - Docker (for containerization)
 
-## License
 
-[Your chosen license] 
+## JSON format for publishing logs:
+
+{
+    "deviceId": String,
+    "moisture": Integer,
+    "light": Double
+}

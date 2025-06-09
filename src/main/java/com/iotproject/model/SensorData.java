@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
@@ -17,9 +18,8 @@ public class SensorData {
 
     @NotNull
     @Column(name = "device_id", nullable = false)
-    private Long deviceId;
+    private String deviceId;
     
-    @NotNull
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
 
@@ -30,6 +30,11 @@ public class SensorData {
     @NotNull
     @Column(name = "light", nullable = false)
     private Double light;
+
+    @PrePersist
+    protected void onCreate() {
+        timestamp = LocalDateTime.now();
+    }
 
     // Default constructor
     public SensorData() {}
@@ -43,11 +48,11 @@ public class SensorData {
         this.id = id;
     }
 
-    public Long getDeviceId() {
+    public String getDeviceId() {
         return deviceId;
     }
 
-    public void setDeviceId(Long deviceId) {
+    public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
     }
 
