@@ -12,6 +12,9 @@ import com.iotproject.repository.SensorDataRepository;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
 import java.util.Map;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,6 +39,7 @@ public class SensorDataService {
 
     @Transactional
     public ResponseEntity<?> saveSensorData(SensorData sensorData) {
+        // Handle exceptions internally
         boolean needsWatering = checkWateringNeeds(sensorData);
         sensorData.setDecision(needsWatering);
         
@@ -50,39 +54,46 @@ public class SensorDataService {
         if (sensorData.getMoisture() <= MOISTURE_WET) {
             return false;
         }
-        
-        // If moisture is dry, check weather conditions
-        else {
-            // Get weather data
-            Map<String, Object> weatherData = weatherService.getForecast("Emden");
-            
-            // Check forecast for rain
-            Map<String, Object> forecast = (Map<String, Object>) weatherData.get("forecast");
-            List<Map<String, Object>> forecastDays = (List<Map<String, Object>>) forecast.get("forecastday");
-            Map<String, Object> todayForecast = forecastDays.get(0);
-            Map<String, Object> day = (Map<String, Object>) todayForecast.get("day");
-            
-            // Don't water if it's currently raining
-            Map<String, Object> current = (Map<String, Object>) weatherData.get("current");
-            double precipMm = ((Number) current.get("precip_mm")).doubleValue();
-            if (precipMm > 0) {
-                return false;
-            }
-            
-            int chanceOfRain = ((Number) day.get("daily_chance_of_rain")).intValue();
-            // Don't water if there's a high chance of rain
-            if (chanceOfRain > 60) {
-                return false;
-            }
-            
-            // If 
-            if (sensorData.getLight() < LIGHT_CLOUDY && sensorData.getMoisture() <= MOISTURE_DRY) {
-                return false; // Don't water if it's cloudy
-            }
-            
-            return true;
+
+        else if(sensorData.getMoisture() >= MOISTURE_DRY){
+            return true; //If moisture is very dry water directly
         }
         
+        // If moisture is somewhat dry, check weather conditions
+        else {
+            try {
+                String city = Files.readString(Paths.get("config/city.txt")).trim();
+                Map<String, Object> weatherData = weatherService.getForecast(city);
+                
+                // Check forecast for rain
+                Map<String, Object> forecast = (Map<String, Object>) weatherData.get("forecast");
+                List<Map<String, Object>> forecastDays = (List<Map<String, Object>>) forecast.get("forecastday");
+                Map<String, Object> todayForecast = forecastDays.get(0);
+                Map<String, Object> day = (Map<String, Object>) todayForecast.get("day");
+                
+                // Don't water if it's currently raining
+                Map<String, Object> current = (Map<String, Object>) weatherData.get("current");
+                double precipMm = ((Number) current.get("precip_mm")).doubleValue();
+                if (precipMm > 0) {
+                    return false;
+                }
+                
+                int chanceOfRain = ((Number) day.get("daily_chance_of_rain")).intValue();
+                // Don't water if there's a high chance of rain
+                if (chanceOfRain > 60) {
+                    return false;
+                }
+                
+                // If 
+                if (sensorData.getLight() < LIGHT_CLOUDY) {
+                    return false; // Don't water if it's cloudy
+                }
+                
+                return true;
+            } catch (Exception e) {
+                return true; // Water if we don't know weather
+            }
+        }
     }
 
     public Page<SensorData> getAllSensorData(Pageable pageable) {
