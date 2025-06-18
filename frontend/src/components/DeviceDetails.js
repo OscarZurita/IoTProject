@@ -15,6 +15,7 @@ import {
   TableRow,
   TablePagination,
   CircularProgress,
+  Chip,
 } from '@mui/material';
 import axios from 'axios';
 
@@ -97,9 +98,9 @@ const DeviceDetails = () => {
       </Typography>
 
       <Grid container spacing={3} sx={{ mb: 4, justifyContent: 'center' }}>
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} md={3}>
           <Card>
-            <CardContent>
+            <CardContent sx={{ py: 3 }}>
               <Typography color="textSecondary" gutterBottom align="center">
                 Moisture
               </Typography>
@@ -109,15 +110,32 @@ const DeviceDetails = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} md={3}>
           <Card>
-            <CardContent>
+            <CardContent sx={{ py: 3 }}>
               <Typography color="textSecondary" gutterBottom align="center">
                 Light
               </Typography>
               <Typography variant="h4" align="center">
                 {deviceData.light.toFixed(1)} lux
               </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Card>
+            <CardContent>
+              <Typography color="textSecondary" gutterBottom align="center">
+                Watering Decision
+              </Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, mb: 1 }}>
+                <Chip
+                  label={deviceData.decision ? "Do Water" : "Don't Water"}
+                  color={deviceData.decision ? "primary" : "success"}
+                  variant="outlined"
+                  sx={{ fontSize: '1.1rem', padding: '6px 16px' }}
+                />
+              </Box>
             </CardContent>
           </Card>
         </Grid>
@@ -131,19 +149,35 @@ const DeviceDetails = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Timestamp</TableCell>
-              <TableCell>Moisture (%)</TableCell>
-              <TableCell>Light (lux)</TableCell>
+              <TableCell align="center">Server Timestamp</TableCell>
+              <TableCell align="center">Device Timestamp</TableCell>
+              <TableCell align="center">Moisture (%)</TableCell>
+              <TableCell align="center">Light (lux)</TableCell>
+              <TableCell align="center">Decision</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {history.map((record) => (
               <TableRow key={record.id}>
-                <TableCell>
+                <TableCell align="center">
                   {new Date(record.timestamp).toLocaleString()}
                 </TableCell>
-                <TableCell>{record.moisture.toFixed(1)}</TableCell>
-                <TableCell>{record.light.toFixed(1)}</TableCell>
+                <TableCell align="center">
+                  {record.deviceTimestamp ? 
+                    new Date(record.deviceTimestamp).toLocaleString() : 
+                    'N/A'
+                  }
+                </TableCell>
+                <TableCell align="center">{record.moisture.toFixed(1)}</TableCell>
+                <TableCell align="center">{record.light.toFixed(1)}</TableCell>
+                <TableCell align="center">
+                  <Chip
+                    label={record.decision ? "Do Water" : "Don't Water"}
+                    color={record.decision ? "primary" : "success"}
+                    size="small"
+                    variant="outlined"
+                  />
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

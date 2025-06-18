@@ -104,10 +104,11 @@ const DeviceList = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Device ID</TableCell>
-              <TableCell>Moisture (%)</TableCell>
-              <TableCell>Light (lux)</TableCell>
-              <TableCell>Last Updated</TableCell>
+              <TableCell align="center">Device ID</TableCell>
+              <TableCell align="center">Moisture (%)</TableCell>
+              <TableCell align="center">Light (lux)</TableCell>
+              <TableCell align="center">Watering Decision</TableCell>
+              <TableCell align="center">Last Updated</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -120,10 +121,18 @@ const DeviceList = () => {
                   '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' }
                 }}
               >
-                <TableCell>{device.deviceId}</TableCell>
-                <TableCell>{device.moisture.toFixed(1)}</TableCell>
-                <TableCell>{device.light.toFixed(1)}</TableCell>
-                <TableCell>
+                <TableCell align="center">{device.deviceId}</TableCell>
+                <TableCell align="center">{device.moisture.toFixed(1)}</TableCell>
+                <TableCell align="center">{device.light.toFixed(1)}</TableCell>
+                <TableCell align="center">
+                  <Chip
+                    label={device.decision ? "Do Water" : "Don't Water"}
+                    color={device.decision ? "primary" : "success"}
+                    size="small"
+                    variant="outlined"
+                  />
+                </TableCell>
+                <TableCell align="center">
                   {new Date(device.timestamp).toLocaleString()}
                 </TableCell>
               </TableRow>
