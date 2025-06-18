@@ -22,11 +22,11 @@ public class SensorDataService {
     private final WeatherService weatherService;
 
     // Moisture thresholds
-    private static final int MOISTURE_WET = 1300;
-    private static final int MOISTURE_DRY = 1700;
+    private static final int MOISTURE_WET = 1300; //under this is very wet
+    private static final int MOISTURE_DRY = 1700; //over this is very dry
     
     // Light threshold
-    private static final int LIGHT_CLOUDY = 1700;
+    private static final int LIGHT_CLOUDY = 1700; //over this is bright
 
     @Autowired
     public SensorDataService(SensorDataRepository sensorDataRepository, WeatherService weatherService) {
@@ -36,17 +36,12 @@ public class SensorDataService {
 
     @Transactional
     public ResponseEntity<?> saveSensorData(SensorData sensorData) {
-        // Save the sensor data
-        SensorData savedData = sensorDataRepository.save(sensorData);
-        
-        // Create response map
-        Map<String, Object> response = new HashMap<>();
-        response.put("sensorData", savedData);
-        
-        // Check if watering is needed
         boolean needsWatering = checkWateringNeeds(sensorData);
-        response.put("needsWatering", needsWatering);
+        sensorData.setDecision(needsWatering);
         
+        Map<String, Object> response = new HashMap<>();
+        SensorData savedData = sensorDataRepository.save(sensorData);
+        response.put("sensorData", savedData);
         return ResponseEntity.ok(response);
     }
 
@@ -85,7 +80,7 @@ public class SensorDataService {
                 return false; // Don't water if it's cloudy
             }
             
-            return true; // Need to water
+            return true;
         }
         
     }

@@ -33,6 +33,7 @@ public class SensorDataController {
         sensorData.setDeviceId(request.getDeviceId());
         sensorData.setMoisture(request.getMoisture());
         sensorData.setLight(request.getLight());
+        sensorData.setDeviceTimestamp(request.getDeviceTimestamp());
         
         return ResponseEntity.ok(sensorDataService.saveSensorData(sensorData).getBody());
     }

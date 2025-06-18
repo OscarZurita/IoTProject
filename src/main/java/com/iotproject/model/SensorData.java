@@ -23,6 +23,9 @@ public class SensorData {
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
 
+    @Column(name = "device_timestamp")
+    private LocalDateTime deviceTimestamp;
+
     @NotNull
     @Column(name = "moisture", nullable = false)
     private Integer moisture;
@@ -30,6 +33,10 @@ public class SensorData {
     @NotNull
     @Column(name = "light", nullable = false)
     private Double light;
+
+    @NotNull
+    @Column(name = "decision", nullable = false, columnDefinition = "TINYINT(1)")
+    private Boolean decision;
 
     @PrePersist
     protected void onCreate() {
@@ -43,7 +50,6 @@ public class SensorData {
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -51,7 +57,6 @@ public class SensorData {
     public String getDeviceId() {
         return deviceId;
     }
-
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
     }
@@ -59,15 +64,20 @@ public class SensorData {
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
-
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public LocalDateTime getDeviceTimestamp(){
+        return deviceTimestamp;
+    }
+    public void setDeviceTimestamp(LocalDateTime deviceTimestamp){
+        this.deviceTimestamp = deviceTimestamp;
     }
 
     public Integer getMoisture() {
         return moisture;
     }
-
     public void setMoisture(Integer moisture) {
         this.moisture = moisture;
     }
@@ -75,8 +85,14 @@ public class SensorData {
     public Double getLight() {
         return light;
     }
-
     public void setLight(Double light) {
         this.light = light;
+    }
+
+    public Boolean getDecision(){
+        return decision;
+    }
+    public void setDecision(Boolean decision){
+        this.decision = decision;
     }
 } 

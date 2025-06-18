@@ -6,24 +6,26 @@ const Weather = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [city, setCity] = useState(() => {
-        // Initialize from localStorage or default to 'Emden'
         return localStorage.getItem('selectedCity') || 'Emden';
     });
-    const [customCity, setCustomCity] = useState('');
+    const [customCity, setCustomCity] = useState('Emden');
 
     useEffect(() => {
         const fetchWeather = async () => {
             try {
                 setLoading(true);
+                setError(null); // Clear any previous errors
                 const response = await fetch(`http://localhost:8080/api/weather?city=${encodeURIComponent(city)}`);
                 if (!response.ok) {
-                    throw new Error('Failed to fetch weather data, check city name');
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to fetch weather data, check city name');
                 }
                 const data = await response.json();
                 setWeatherData(data);
-                setLoading(false);
             } catch (err) {
                 setError(err.message);
+                setWeatherData(null);
+            } finally {
                 setLoading(false);
             }
         };
@@ -41,11 +43,28 @@ const Weather = () => {
             setCity(newCity);
             localStorage.setItem('selectedCity', newCity);
             setCustomCity('');
+            setError(null); // Clear error when changing city
         }
     };
 
     if (loading) return <div className="weather-container">Loading weather data...</div>;
-    if (error) return <div className="weather-container error">Error: {error}</div>;
+    if (error) return (
+        <div className="weather-container error">
+            <div className="error-message">Error: {error}</div>
+            <form onSubmit={handleCustomCitySubmit} className="custom-city-form">
+                <input
+                    type="text"
+                    value={customCity}
+                    onChange={(e) => setCustomCity(e.target.value)}
+                    placeholder="Enter city name"
+                    className="custom-city-input"
+                />
+                <button type="submit" className="custom-city-button">
+                    Search
+                </button>
+            </form>
+        </div>
+    );
     if (!weatherData) return null;
 
     return (
