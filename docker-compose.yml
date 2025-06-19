@@ -7,10 +7,14 @@ services:
     restart: "no"
     ports:
       - "8080:8080"
+    env_file:
+      - .env
     environment:
       SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/iot_plant
       SPRING_DATASOURCE_USERNAME: iot_user
-      SPRING_DATASOURCE_PASSWORD: userdbpassword
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      MAILGUN_API_KEY: ${MAIL_GUN_API_KEY}
+      WEATHER_API_KEY: ${WEATHER_API_KEY}
     depends_on:
       - mariadb
 

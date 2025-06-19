@@ -10,7 +10,10 @@ import {
     IconButton,
     CircularProgress,
     Snackbar,
-    Alert
+    Alert,
+    Tabs,
+    Tab,
+    Box
 } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 
@@ -25,6 +28,10 @@ const Weather = () => {
     const [newCity, setNewCity] = useState('');
     const [saving, setSaving] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+    const [tabIndex, setTabIndex] = useState(0);
+    const [email, setEmail] = useState('');
+    const [newEmail, setNewEmail] = useState('');
+    const [emailLoading, setEmailLoading] = useState(false);
 
     useEffect(() => {
         const fetchWeather = async () => {
@@ -53,7 +60,18 @@ const Weather = () => {
 
     const handleDialogOpen = () => {
         setNewCity('');
+        setTabIndex(0);
         setDialogOpen(true);
+        // Fetch email
+        setEmailLoading(true);
+        fetch('http://localhost:8080/api/mail')
+            .then(res => res.json())
+            .then(data => {
+                if (data.email) setEmail(data.email);
+                else setEmail('');
+            })
+            .catch(() => setEmail(''))
+            .finally(() => setEmailLoading(false));
     };
 
     const handleDialogClose = () => {
@@ -95,6 +113,36 @@ const Weather = () => {
         }
     };
 
+    const handleTabChange = (event, newValue) => {
+        setTabIndex(newValue);
+    };
+
+    const handleEmailChange = (e) => setNewEmail(e.target.value);
+
+    const handleEmailSave = async () => {
+        if (!newEmail.trim()) {
+            setSnackbar({ open: true, message: 'Email must not be empty', severity: 'error' });
+            return;
+        }
+        setSaving(true);
+        try {
+            const response = await fetch('http://localhost:8080/api/mail', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'text/plain' },
+                body: newEmail.trim()
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || 'Failed to update email');
+            setEmail(newEmail.trim());
+            setSnackbar({ open: true, message: 'Email updated successfully!', severity: 'success' });
+            setDialogOpen(false);
+        } catch (err) {
+            setSnackbar({ open: true, message: err.message, severity: 'error' });
+        } finally {
+            setSaving(false);
+        }
+    };
+
     if (loading) return <div className="weather-container">Loading weather data...</div>;
     if (error) return (
         <div className="weather-container error">
@@ -103,22 +151,53 @@ const Weather = () => {
                 Config
             </Button>
             <Dialog open={dialogOpen} onClose={handleDialogClose}>
-                <DialogTitle>Change City</DialogTitle>
+                <DialogTitle>Config</DialogTitle>
                 <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        label="City"
-                        type="text"
-                        fullWidth
-                        value={newCity}
-                        onChange={handleCityChange}
-                        disabled={saving}
-                    />
+                    <Tabs value={tabIndex} onChange={handleTabChange} aria-label="config tabs">
+                        <Tab label="City" />
+                        <Tab label="Email" />
+                    </Tabs>
+                    <Box hidden={tabIndex !== 0} sx={{ pt: 2 }}>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            label="City"
+                            type="text"
+                            fullWidth
+                            value={newCity}
+                            onChange={handleCityChange}
+                            disabled={saving}
+                        />
+                    </Box>
+                    <Box hidden={tabIndex !== 1} sx={{ pt: 2 }}>
+                        {emailLoading ? (
+                            <CircularProgress />
+                        ) : (
+                            <>
+                                <TextField
+                                    margin="dense"
+                                    label="Recipient Email"
+                                    type="email"
+                                    fullWidth
+                                    value={newEmail}
+                                    onChange={handleEmailChange}
+                                    placeholder={email}
+                                    disabled={saving}
+                                />
+                                <Box sx={{ fontSize: 12, color: 'gray', mt: 1 }}>
+                                    Current: {email || 'Not set'}
+                                </Box>
+                            </>
+                        )}
+                    </Box>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDialogClose} disabled={saving}>Cancel</Button>
-                    <Button onClick={handleCitySave} disabled={saving} variant="contained">Save</Button>
+                    {tabIndex === 0 ? (
+                        <Button onClick={handleCitySave} disabled={saving} variant="contained">Save</Button>
+                    ) : (
+                        <Button onClick={handleEmailSave} disabled={saving} variant="contained">Save</Button>
+                    )}
                 </DialogActions>
             </Dialog>
             <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={handleSnackbarClose}>
@@ -138,22 +217,53 @@ const Weather = () => {
                 </Button>
             </div>
             <Dialog open={dialogOpen} onClose={handleDialogClose}>
-                <DialogTitle>Change City</DialogTitle>
+                <DialogTitle>Config</DialogTitle>
                 <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        label="City"
-                        type="text"
-                        fullWidth
-                        value={newCity}
-                        onChange={handleCityChange}
-                        disabled={saving}
-                    />
+                    <Tabs value={tabIndex} onChange={handleTabChange} aria-label="config tabs">
+                        <Tab label="City" />
+                        <Tab label="Email" />
+                    </Tabs>
+                    <Box hidden={tabIndex !== 0} sx={{ pt: 2 }}>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            label="City"
+                            type="text"
+                            fullWidth
+                            value={newCity}
+                            onChange={handleCityChange}
+                            disabled={saving}
+                        />
+                    </Box>
+                    <Box hidden={tabIndex !== 1} sx={{ pt: 2 }}>
+                        {emailLoading ? (
+                            <CircularProgress />
+                        ) : (
+                            <>
+                                <TextField
+                                    margin="dense"
+                                    label="Recipient Email"
+                                    type="email"
+                                    fullWidth
+                                    value={newEmail}
+                                    onChange={handleEmailChange}
+                                    placeholder={email}
+                                    disabled={saving}
+                                />
+                                <Box sx={{ fontSize: 12, color: 'gray', mt: 1 }}>
+                                    Current: {email || 'Not set'}
+                                </Box>
+                            </>
+                        )}
+                    </Box>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDialogClose} disabled={saving}>Cancel</Button>
-                    <Button onClick={handleCitySave} disabled={saving} variant="contained">Save</Button>
+                    {tabIndex === 0 ? (
+                        <Button onClick={handleCitySave} disabled={saving} variant="contained">Save</Button>
+                    ) : (
+                        <Button onClick={handleEmailSave} disabled={saving} variant="contained">Save</Button>
+                    )}
                 </DialogActions>
             </Dialog>
             <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={handleSnackbarClose}>

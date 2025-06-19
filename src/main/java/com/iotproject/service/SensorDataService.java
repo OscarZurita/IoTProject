@@ -23,6 +23,7 @@ public class SensorDataService {
     
     private final SensorDataRepository sensorDataRepository;
     private final WeatherService weatherService;
+    private final MailService mailService;
 
     // Moisture thresholds
     private static final int MOISTURE_WET = 1300; //under this is very wet
@@ -32,9 +33,10 @@ public class SensorDataService {
     private static final int LIGHT_CLOUDY = 1700; //over this is bright
 
     @Autowired
-    public SensorDataService(SensorDataRepository sensorDataRepository, WeatherService weatherService) {
+    public SensorDataService(SensorDataRepository sensorDataRepository, WeatherService weatherService, MailService mailService) {
         this.sensorDataRepository = sensorDataRepository;
         this.weatherService = weatherService;
+        this.mailService = mailService;
     }
 
     @Transactional
@@ -56,6 +58,19 @@ public class SensorDataService {
         }
 
         else if(sensorData.getMoisture() >= MOISTURE_DRY){
+            if(sensorData.getMoisture() >= 2000){
+                System.out.println("SOIL DRY");
+                String message = "Soil too dry detected on device: "+ sensorData.getDeviceId();
+                String emailRecipient = "";
+                try {
+                    emailRecipient = Files.readString(Paths.get("config/email.txt")).trim();
+                } catch (IOException e) {
+                    System.err.println("Failed to read email recipient from config/email.txt: " + e.getMessage());
+                    // Optionally, set a fallback or skip sending
+                    return true;
+                }
+                mailService.sendEmail(emailRecipient, "DRY WARNING", message);
+            }
             return true; //If moisture is very dry water directly
         }
         
